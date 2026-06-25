@@ -1,0 +1,659 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AURA | Luxury Makeup Artistry</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        blush: '#F9EAE8',
+                        blushdark: '#E6C2BF',
+                        gold: '#D4AF37',
+                        goldlight: '#F3E5AB',
+                        charcoal: '#1A1A1A',
+                    },
+                    fontFamily: {
+                        serif: ['Cinzel', 'serif'],
+                        sans: ['Outfit', 'sans-serif'],
+                    },
+                    backgroundImage: {
+                        'hero-pattern': "url('https://images.pexels.com/photos/10457787/pexels-photo-10457787.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=1080&w=1920')",
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Custom Styles & Micro-interactions */
+        body {
+            background-color: #FAFAFA;
+            color: #1A1A1A;
+            overflow-x: hidden;
+        }
+        
+        .glass-nav {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(212, 175, 55, 0.2);
+        }
+
+        .nav-transparent {
+            background: transparent;
+            border-bottom: 1px solid transparent;
+        }
+
+        .nav-transparent .nav-link {
+            color: white;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+        }
+        
+        .nav-scrolled {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(12px);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.05);
+        }
+        
+        .nav-scrolled .nav-link {
+            color: #1A1A1A;
+            text-shadow: none;
+        }
+        
+        /* Hero Parallax Overlay */
+        .hero-overlay {
+            background: linear-gradient(to bottom, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0.6) 100%);
+        }
+
+        /* Gold Glow Button */
+        .btn-gold {
+            position: relative;
+            background: linear-gradient(135deg, #C5A059 0%, #D4AF37 100%);
+            color: white;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            overflow: hidden;
+            z-index: 1;
+        }
+        .btn-gold::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: linear-gradient(135deg, #D4AF37 0%, #E5C158 100%);
+            opacity: 0;
+            z-index: -1;
+            transition: opacity 0.4s ease;
+        }
+        .btn-gold:hover::before {
+            opacity: 1;
+        }
+        .btn-gold:hover {
+            box-shadow: 0 10px 25px -5px rgba(212, 175, 55, 0.5), 0 8px 10px -6px rgba(212, 175, 55, 0.3);
+            transform: translateY(-2px);
+        }
+
+        /* Image Hover Reveal */
+        .img-reveal-container {
+            overflow: hidden;
+        }
+        .img-reveal {
+            transition: transform 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+        .img-reveal-container:hover .img-reveal {
+            transform: scale(1.05);
+        }
+        
+        /* Before/After Slider */
+        .ba-container {
+            position: relative;
+            width: 100%;
+            height: 600px;
+            overflow: hidden;
+            border-radius: 1rem;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+        }
+        .ba-image {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center;
+        }
+        .ba-after {
+            clip-path: inset(0 50% 0 0); /* Initial position */
+        }
+        .ba-slider {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: 50%;
+            width: 4px;
+            background: #D4AF37;
+            transform: translateX(-50%);
+            cursor: ew-resize;
+            box-shadow: 0 0 15px rgba(212, 175, 55, 0.8);
+            z-index: 10;
+        }
+        .ba-slider-btn {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 40px;
+            height: 40px;
+            background: #D4AF37;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+            pointer-events: none;
+        }
+
+        /* Inputs */
+        .input-line {
+            border: none;
+            border-bottom: 1px solid #ccc;
+            border-radius: 0;
+            background: transparent;
+            padding: 10px 0;
+            transition: border-color 0.3s ease;
+        }
+        .input-line:focus {
+            outline: none;
+            border-bottom-color: #D4AF37;
+            box-shadow: 0 1px 0 0 #D4AF37;
+        }
+
+        /* Animations */
+        .reveal {
+            opacity: 0;
+            transform: translateY(40px);
+            transition: all 1s cubic-bezier(0.5, 0, 0, 1);
+        }
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .delay-100 { transition-delay: 100ms; }
+        .delay-200 { transition-delay: 200ms; }
+        .delay-300 { transition-delay: 300ms; }
+
+        /* Custom selection */
+        ::selection {
+            background-color: #D4AF37;
+            color: white;
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <!-- Navigation -->
+    <nav id="navbar" class="fixed w-full z-50 transition-all duration-500 nav-transparent py-4">
+        <div class="max-w-7xl mx-auto px-6 md:px-12 flex justify-between items-center">
+            <a href="#" class="font-serif text-2xl tracking-widest text-gold font-bold">AURA<span class="text-white text-sm block font-sans tracking-[0.2em] font-normal uppercase" id="logo-sub">Artistry</span></a>
+            
+            <div class="hidden md:flex space-x-8 items-center">
+                <a href="#about" class="nav-link font-sans text-sm tracking-widest uppercase hover:text-gold transition-colors">About</a>
+                <a href="#portfolio" class="nav-link font-sans text-sm tracking-widest uppercase hover:text-gold transition-colors">Portfolio</a>
+                <a href="#before-after" class="nav-link font-sans text-sm tracking-widest uppercase hover:text-gold transition-colors">Transformations</a>
+                <a href="#testimonials" class="nav-link font-sans text-sm tracking-widest uppercase hover:text-gold transition-colors">Love Notes</a>
+                <a href="#book" class="btn-gold px-6 py-2.5 rounded-sm text-sm uppercase tracking-widest font-medium">Book Now</a>
+            </div>
+
+            <!-- Mobile Menu Btn -->
+            <button class="md:hidden text-2xl text-gold" id="mobile-menu-btn">
+                <i class="fa-solid fa-bars"></i>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Mobile Menu Overlay -->
+    <div id="mobile-menu" class="fixed inset-0 bg-white z-40 hidden flex-col items-center justify-center space-y-8 opacity-0 transition-opacity duration-300">
+        <button id="close-menu-btn" class="absolute top-6 right-6 text-2xl text-charcoal">
+            <i class="fa-solid fa-xmark"></i>
+        </button>
+        <a href="#about" class="mobile-link font-serif text-2xl text-charcoal hover:text-gold transition-colors">About</a>
+        <a href="#portfolio" class="mobile-link font-serif text-2xl text-charcoal hover:text-gold transition-colors">Portfolio</a>
+        <a href="#before-after" class="mobile-link font-serif text-2xl text-charcoal hover:text-gold transition-colors">Transformations</a>
+        <a href="#testimonials" class="mobile-link font-serif text-2xl text-charcoal hover:text-gold transition-colors">Love Notes</a>
+        <a href="#book" class="mobile-link font-serif text-2xl text-gold">Book Now</a>
+    </div>
+
+    <!-- Hero Section -->
+    <header class="relative h-screen bg-hero-pattern bg-cover bg-center bg-fixed bg-no-repeat flex items-center justify-center text-center">
+        <div class="absolute inset-0 hero-overlay"></div>
+        <div class="relative z-10 px-6 max-w-4xl mx-auto reveal active">
+            <h2 class="text-gold tracking-[0.3em] uppercase text-sm md:text-base mb-4 font-sans">Bespoke Beauty Experiences</h2>
+            <h1 class="text-5xl md:text-7xl lg:text-8xl text-white font-serif mb-6 leading-tight">Elevate Your<br><span class="italic text-blush">Natural Elegance</span></h1>
+            <p class="text-gray-200 font-sans text-lg md:text-xl font-light mb-10 max-w-2xl mx-auto">Luxury bridal and editorial makeup artistry, crafting timeless looks for the modern romantic.</p>
+            <div class="flex flex-col sm:flex-row gap-4 justify-center items-center">
+                <a href="#portfolio" class="px-8 py-3.5 border border-white text-white hover:bg-white hover:text-charcoal transition-all duration-300 font-sans tracking-widest uppercase text-sm w-full sm:w-auto">View Portfolio</a>
+                <a href="#book" class="btn-gold px-8 py-3.5 rounded-sm font-sans tracking-widest uppercase text-sm w-full sm:w-auto text-white">Inquire Now</a>
+            </div>
+        </div>
+        
+        <!-- Scroll indicator -->
+        <div class="absolute bottom-10 left-1/2 transform -translate-x-1/2 flex flex-col items-center animate-bounce">
+            <span class="text-white text-xs tracking-[0.2em] mb-2 font-sans uppercase">Scroll</span>
+            <i class="fa-solid fa-chevron-down text-gold"></i>
+        </div>
+    </header>
+
+    <!-- About Section -->
+    <section id="about" class="py-24 md:py-32 bg-white relative">
+        <div class="absolute top-0 right-0 w-64 h-64 bg-blush opacity-30 rounded-full blur-3xl -translate-y-1/2 translate-x-1/4"></div>
+        <div class="max-w-7xl mx-auto px-6 md:px-12 flex flex-col md:flex-row items-center gap-16">
+            <div class="w-full md:w-1/2 img-reveal-container rounded-t-full rounded-b-md shadow-2xl relative reveal">
+                <div class="absolute -inset-2 border border-gold opacity-50 rounded-t-full rounded-b-md transform -translate-x-4 translate-y-4 -z-10"></div>
+                <img src="https://images.pexels.com/photos/13933220/pexels-photo-13933220.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=800&w=600" alt="Makeup Artist at Work" class="w-full h-auto img-reveal">
+            </div>
+            <div class="w-full md:w-1/2 reveal delay-200">
+                <h3 class="text-gold tracking-[0.2em] uppercase text-sm mb-4 font-sans">The Artist</h3>
+                <h2 class="text-4xl md:text-5xl font-serif text-charcoal mb-6 leading-tight">Crafting Confidence,<br>One Brushstroke at a Time.</h2>
+                <p class="text-gray-600 font-sans font-light leading-relaxed mb-6">
+                    With over a decade of experience in the luxury beauty industry, I believe that makeup should never mask who you are, but rather illuminate your most beautiful self.
+                </p>
+                <p class="text-gray-600 font-sans font-light leading-relaxed mb-8">
+                    Using only premium, high-performance products, my approach merges editorial sophistication with timeless bridal romance. From flawless, glowing skin to captivating eyes, every detail is meticulously tailored to your unique features and vision.
+                </p>
+                <img src="https://upload.wikimedia.org/wikipedia/commons/e/ea/Signature_of_Charlotte_Bronte.svg" alt="Signature" class="h-12 opacity-60 filter grayscale mb-8">
+                <a href="#portfolio" class="inline-flex items-center text-charcoal hover:text-gold font-sans uppercase tracking-widest text-sm transition-colors border-b border-gold pb-1">
+                    Discover my work <i class="fa-solid fa-arrow-right ml-2 text-xs"></i>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Services Banner -->
+    <section class="py-16 bg-charcoal text-white relative overflow-hidden">
+        <div class="absolute inset-0 opacity-10 bg-[url('https://www.transparenttextures.com/patterns/stardust.png')]"></div>
+        <div class="max-w-7xl mx-auto px-6 flex flex-col md:flex-row justify-around items-center gap-8 reveal relative z-10">
+            <div class="text-center">
+                <i class="fa-solid fa-ring text-3xl text-gold mb-4"></i>
+                <h4 class="font-serif text-xl mb-2">Bridal Glamour</h4>
+                <p class="text-gray-400 font-sans font-light text-sm max-w-xs mx-auto">Flawless, long-lasting applications designed for photography and emotion.</p>
+            </div>
+            <div class="w-px h-16 bg-gold opacity-30 hidden md:block"></div>
+            <div class="text-center">
+                <i class="fa-solid fa-camera-retro text-3xl text-gold mb-4"></i>
+                <h4 class="font-serif text-xl mb-2">Editorial & Fashion</h4>
+                <p class="text-gray-400 font-sans font-light text-sm max-w-xs mx-auto">Avant-garde and high-fashion looks for runway, print, and film.</p>
+            </div>
+            <div class="w-px h-16 bg-gold opacity-30 hidden md:block"></div>
+            <div class="text-center">
+                <i class="fa-solid fa-champagne-glasses text-3xl text-gold mb-4"></i>
+                <h4 class="font-serif text-xl mb-2">Special Events</h4>
+                <p class="text-gray-400 font-sans font-light text-sm max-w-xs mx-auto">Red carpet ready glamour for your most important occasions.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Portfolio Section -->
+    <section id="portfolio" class="py-24 bg-[#FAFAFA]">
+        <div class="max-w-7xl mx-auto px-6 md:px-12">
+            <div class="text-center mb-16 reveal">
+                <h3 class="text-gold tracking-[0.2em] uppercase text-sm mb-4 font-sans">The Gallery</h3>
+                <h2 class="text-4xl md:text-5xl font-serif text-charcoal mb-4">A Glimpse of Glamour</h2>
+                <div class="w-24 h-px bg-gold mx-auto"></div>
+            </div>
+
+            <!-- Masonry Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Item 1 -->
+                <div class="relative group overflow-hidden rounded-md reveal img-reveal-container">
+                    <img src="https://images.pexels.com/photos/33466159/pexels-photo-33466159.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=800&w=600" alt="Bridal Look" class="w-full h-[500px] object-cover img-reveal">
+                    <div class="absolute inset-0 bg-black bg-opacity-40 opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex flex-col justify-end p-8">
+                        <span class="text-gold uppercase tracking-widest text-xs mb-2">Bridal</span>
+                        <h4 class="text-white font-serif text-2xl">Classic Romance</h4>
+                    </div>
+                </div>
+                <!-- Item 2 -->
+                <div class="relative group overflow-hidden rounded-md reveal delay-100 img-reveal-container md:translate-y-12">
+                    <img src="https://images.pexels.com/photos/34328152/pexels-photo-34328152.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=800&w=600" alt="Elegant Bride" class="w-full h-[500px] object-cover img-reveal">
+                    <div class="absolute inset-0 bg-black bg-opacity-40 opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex flex-col justify-end p-8">
+                        <span class="text-gold uppercase tracking-widest text-xs mb-2">Bridal</span>
+                        <h4 class="text-white font-serif text-2xl">Modern Elegance</h4>
+                    </div>
+                </div>
+                <!-- Item 3 -->
+                <div class="relative group overflow-hidden rounded-md reveal delay-200 img-reveal-container">
+                    <img src="https://images.pexels.com/photos/34221131/pexels-photo-34221131.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=800&w=600" alt="Editorial Makeup" class="w-full h-[500px] object-cover img-reveal">
+                    <div class="absolute inset-0 bg-black bg-opacity-40 opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex flex-col justify-end p-8">
+                        <span class="text-gold uppercase tracking-widest text-xs mb-2">Editorial</span>
+                        <h4 class="text-white font-serif text-2xl">Bold & Cinematic</h4>
+                    </div>
+                </div>
+                <!-- Item 4 -->
+                <div class="relative group overflow-hidden rounded-md reveal img-reveal-container">
+                    <img src="https://images.pexels.com/photos/15789321/pexels-photo-15789321.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=800&w=600" alt="Cultural Bridal" class="w-full h-[500px] object-cover img-reveal">
+                    <div class="absolute inset-0 bg-black bg-opacity-40 opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex flex-col justify-end p-8">
+                        <span class="text-gold uppercase tracking-widest text-xs mb-2">Cultural Bridal</span>
+                        <h4 class="text-white font-serif text-2xl">Traditional Glow</h4>
+                    </div>
+                </div>
+                <!-- Item 5 -->
+                <div class="relative group overflow-hidden rounded-md reveal delay-100 img-reveal-container md:translate-y-12">
+                    <img src="https://images.pexels.com/photos/14008893/pexels-photo-14008893.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=800&w=600" alt="Fashion Glamour" class="w-full h-[500px] object-cover img-reveal">
+                    <div class="absolute inset-0 bg-black bg-opacity-40 opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex flex-col justify-end p-8">
+                        <span class="text-gold uppercase tracking-widest text-xs mb-2">Fashion</span>
+                        <h4 class="text-white font-serif text-2xl">Vibrant Allure</h4>
+                    </div>
+                </div>
+                <!-- Item 6 -->
+                <div class="relative group overflow-hidden rounded-md reveal delay-200 img-reveal-container">
+                    <img src="https://images.pexels.com/photos/6031937/pexels-photo-6031937.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=800&w=600" alt="Bridal Glow" class="w-full h-[500px] object-cover img-reveal">
+                    <div class="absolute inset-0 bg-black bg-opacity-40 opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex flex-col justify-end p-8">
+                        <span class="text-gold uppercase tracking-widest text-xs mb-2">Bridal</span>
+                        <h4 class="text-white font-serif text-2xl">Luminous Skin</h4>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="text-center mt-20 md:mt-32 reveal">
+                <a href="#" class="inline-flex items-center btn-gold px-8 py-3 rounded-sm font-sans uppercase tracking-widest text-sm transition-colors text-white">
+                    View Full Portfolio
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Before & After Section -->
+    <section id="before-after" class="py-24 bg-blushdark bg-opacity-10 relative">
+        <div class="max-w-5xl mx-auto px-6">
+            <div class="text-center mb-16 reveal">
+                <h3 class="text-gold tracking-[0.2em] uppercase text-sm mb-4 font-sans">The Magic</h3>
+                <h2 class="text-4xl md:text-5xl font-serif text-charcoal mb-4">Transformations</h2>
+                <p class="text-gray-600 font-sans font-light max-w-xl mx-auto">Slide to reveal the power of professional makeup artistry. Enhancing natural beauty, never masking it.</p>
+            </div>
+
+            <!-- Custom Slider -->
+            <div class="ba-container reveal delay-200" id="slider-container">
+                <!-- Before Image (Base) -->
+                <img src="https://images.pexels.com/photos/1552542/pexels-photo-1552542.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=800&w=1200" alt="Before Makeup" class="ba-image">
+                
+                <!-- After Image (Clipped) -->
+                <img src="https://images.pexels.com/photos/34221131/pexels-photo-34221131.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=800&w=1200" alt="After Makeup" class="ba-image ba-after" id="img-after">
+                
+                <!-- Slider Line & Button -->
+                <div class="ba-slider" id="slider-line">
+                    <div class="ba-slider-btn">
+                        <i class="fa-solid fa-arrows-left-right text-sm"></i>
+                    </div>
+                </div>
+                
+                <!-- Labels -->
+                <div class="absolute top-6 left-6 bg-black bg-opacity-50 text-white px-4 py-1 text-xs uppercase tracking-widest rounded-sm backdrop-blur-sm pointer-events-none">Before</div>
+                <div class="absolute top-6 right-6 bg-black bg-opacity-50 text-white px-4 py-1 text-xs uppercase tracking-widest rounded-sm backdrop-blur-sm pointer-events-none">After</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials -->
+    <section id="testimonials" class="py-24 bg-white">
+        <div class="max-w-7xl mx-auto px-6 md:px-12">
+            <div class="text-center mb-16 reveal">
+                <i class="fa-solid fa-quote-right text-4xl text-blushdark opacity-50 mb-4"></i>
+                <h2 class="text-4xl md:text-5xl font-serif text-charcoal mb-4">Words of Love</h2>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <!-- Card 1 -->
+                <div class="p-10 border border-gray-100 shadow-xl rounded-lg relative overflow-hidden reveal group hover:border-gold transition-colors duration-500">
+                    <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-gold to-goldlight transform scale-x-0 group-hover:scale-x-100 transition-transform origin-left duration-500"></div>
+                    <div class="flex text-gold mb-4 text-xs">
+                        <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+                    </div>
+                    <p class="font-sans font-light text-gray-600 mb-6 italic leading-relaxed">"I felt like an absolute goddess on my wedding day. The makeup stayed flawless through tears, dancing, and heat. Truly the best investment for my big day."</p>
+                    <div class="flex items-center gap-4">
+                        <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="Client" class="w-12 h-12 rounded-full object-cover">
+                        <div>
+                            <h4 class="font-serif text-charcoal text-lg">Eleanor M.</h4>
+                            <span class="text-xs text-gray-400 uppercase tracking-widest">Bride</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 2 -->
+                <div class="p-10 border border-gray-100 shadow-xl rounded-lg relative overflow-hidden reveal delay-100 group hover:border-gold transition-colors duration-500">
+                    <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-gold to-goldlight transform scale-x-0 group-hover:scale-x-100 transition-transform origin-left duration-500"></div>
+                    <div class="flex text-gold mb-4 text-xs">
+                        <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+                    </div>
+                    <p class="font-sans font-light text-gray-600 mb-6 italic leading-relaxed">"Incredibly professional and intuitive. She knew exactly what would highlight my features. The editorial shoot came out stunning thanks to her vision."</p>
+                    <div class="flex items-center gap-4">
+                        <img src="https://randomuser.me/api/portraits/women/68.jpg" alt="Client" class="w-12 h-12 rounded-full object-cover">
+                        <div>
+                            <h4 class="font-serif text-charcoal text-lg">Sophia R.</h4>
+                            <span class="text-xs text-gray-400 uppercase tracking-widest">Model</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 3 -->
+                <div class="p-10 border border-gray-100 shadow-xl rounded-lg relative overflow-hidden reveal delay-200 group hover:border-gold transition-colors duration-500">
+                    <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-gold to-goldlight transform scale-x-0 group-hover:scale-x-100 transition-transform origin-left duration-500"></div>
+                    <div class="flex text-gold mb-4 text-xs">
+                        <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+                    </div>
+                    <p class="font-sans font-light text-gray-600 mb-6 italic leading-relaxed">"I have never received so many compliments! The skin finish was incredibly radiant yet looked like I had nothing on. Pure sorcery and artistry!"</p>
+                    <div class="flex items-center gap-4">
+                        <img src="https://randomuser.me/api/portraits/women/24.jpg" alt="Client" class="w-12 h-12 rounded-full object-cover">
+                        <div>
+                            <h4 class="font-serif text-charcoal text-lg">Isabella T.</h4>
+                            <span class="text-xs text-gray-400 uppercase tracking-widest">Event Guest</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Booking Section -->
+    <section id="book" class="py-24 bg-charcoal relative overflow-hidden">
+        <!-- Abstract BG Elements -->
+        <div class="absolute top-[-10%] left-[-10%] w-[40%] h-[60%] bg-gold opacity-5 rounded-full blur-[100px] pointer-events-none"></div>
+        <div class="absolute bottom-[-10%] right-[-10%] w-[30%] h-[50%] bg-blush opacity-5 rounded-full blur-[100px] pointer-events-none"></div>
+
+        <div class="max-w-5xl mx-auto px-6 flex flex-col md:flex-row gap-16 relative z-10">
+            <div class="w-full md:w-1/2 reveal">
+                <h3 class="text-gold tracking-[0.2em] uppercase text-sm mb-4 font-sans">Inquire</h3>
+                <h2 class="text-4xl md:text-5xl font-serif text-white mb-6">Secure Your Date</h2>
+                <p class="text-gray-400 font-sans font-light mb-8 leading-relaxed">
+                    Now booking for the 2026-2027 wedding seasons. Please fill out the form below with your event details, and my team will be in touch within 48 hours to discuss your bespoke beauty experience.
+                </p>
+                <div class="space-y-4 font-sans text-gray-300 font-light">
+                    <p class="flex items-center"><i class="fa-solid fa-envelope text-gold w-6"></i> hello@auraelegance.com</p>
+                    <p class="flex items-center"><i class="fa-solid fa-location-dot text-gold w-6"></i> Based in New York, Available Worldwide</p>
+                </div>
+            </div>
+
+            <div class="w-full md:w-1/2 reveal delay-100 bg-white p-8 md:p-10 rounded-sm shadow-2xl">
+                <form action="#" class="space-y-6">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label class="text-xs text-gray-400 uppercase tracking-widest font-sans">First Name</label>
+                            <input type="text" class="w-full input-line font-sans" required>
+                        </div>
+                        <div>
+                            <label class="text-xs text-gray-400 uppercase tracking-widest font-sans">Last Name</label>
+                            <input type="text" class="w-full input-line font-sans" required>
+                        </div>
+                    </div>
+                    <div>
+                        <label class="text-xs text-gray-400 uppercase tracking-widest font-sans">Email Address</label>
+                        <input type="email" class="w-full input-line font-sans" required>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label class="text-xs text-gray-400 uppercase tracking-widest font-sans">Event Date</label>
+                            <input type="date" class="w-full input-line font-sans text-gray-600" required>
+                        </div>
+                        <div>
+                            <label class="text-xs text-gray-400 uppercase tracking-widest font-sans">Service Type</label>
+                            <select class="w-full input-line font-sans text-gray-600" required>
+                                <option value="bridal">Bridal Makeup</option>
+                                <option value="editorial">Editorial / Fashion</option>
+                                <option value="event">Special Event</option>
+                                <option value="lesson">Makeup Lesson</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div>
+                        <label class="text-xs text-gray-400 uppercase tracking-widest font-sans">Details & Vision</label>
+                        <textarea rows="3" class="w-full input-line font-sans resize-none" placeholder="Tell me about your dream look..."></textarea>
+                    </div>
+                    <button type="submit" class="btn-gold w-full py-4 text-sm tracking-widest uppercase font-medium mt-4 rounded-sm">Submit Inquiry</button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-[#111] py-12 border-t border-gray-800 text-center">
+        <div class="max-w-7xl mx-auto px-6 flex flex-col items-center">
+            <a href="#" class="font-serif text-3xl tracking-widest text-gold font-bold mb-6">AURA</a>
+            <div class="flex space-x-6 mb-8 text-gray-400">
+                <a href="#" class="hover:text-gold transition-colors"><i class="fa-brands fa-instagram text-xl"></i></a>
+                <a href="#" class="hover:text-gold transition-colors"><i class="fa-brands fa-pinterest text-xl"></i></a>
+                <a href="#" class="hover:text-gold transition-colors"><i class="fa-brands fa-tiktok text-xl"></i></a>
+            </div>
+            <div class="flex flex-wrap justify-center gap-6 mb-8">
+                <a href="#" class="text-gray-500 hover:text-white font-sans text-xs uppercase tracking-widest transition-colors">Privacy Policy</a>
+                <a href="#" class="text-gray-500 hover:text-white font-sans text-xs uppercase tracking-widest transition-colors">Terms of Service</a>
+                <a href="#" class="text-gray-500 hover:text-white font-sans text-xs uppercase tracking-widest transition-colors">FAQ</a>
+            </div>
+            <p class="text-gray-600 font-sans text-xs">&copy; 2026 AURA Makeup Artistry. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script>
+        // Navbar Scroll Effect
+        const navbar = document.getElementById('navbar');
+        const logoSub = document.getElementById('logo-sub');
+        const navLinks = document.querySelectorAll('.nav-link');
+        
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 50) {
+                navbar.classList.remove('nav-transparent', 'py-4');
+                navbar.classList.add('nav-scrolled', 'py-2');
+                logoSub.classList.remove('text-white');
+                logoSub.classList.add('text-gray-500');
+            } else {
+                navbar.classList.add('nav-transparent', 'py-4');
+                navbar.classList.remove('nav-scrolled', 'py-2');
+                logoSub.classList.add('text-white');
+                logoSub.classList.remove('text-gray-500');
+            }
+        });
+
+        // Intersection Observer for Reveal Animations
+        const revealElements = document.querySelectorAll('.reveal');
+        
+        const revealCallback = (entries, observer) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('active');
+                    observer.unobserve(entry.target);
+                }
+            });
+        };
+
+        const revealOptions = {
+            threshold: 0.1,
+            rootMargin: "0px 0px -50px 0px"
+        };
+
+        const revealObserver = new IntersectionObserver(revealCallback, revealOptions);
+        
+        revealElements.forEach(el => {
+            if(!el.classList.contains('active')) {
+                revealObserver.observe(el);
+            }
+        });
+
+        // Mobile Menu
+        const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+        const closeMenuBtn = document.getElementById('close-menu-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+        const mobileLinks = document.querySelectorAll('.mobile-link');
+
+        function toggleMenu() {
+            if (mobileMenu.classList.contains('hidden')) {
+                mobileMenu.classList.remove('hidden');
+                setTimeout(() => mobileMenu.classList.remove('opacity-0'), 10);
+                document.body.style.overflow = 'hidden';
+            } else {
+                mobileMenu.classList.add('opacity-0');
+                setTimeout(() => mobileMenu.classList.add('hidden'), 300);
+                document.body.style.overflow = '';
+            }
+        }
+
+        mobileMenuBtn.addEventListener('click', toggleMenu);
+        closeMenuBtn.addEventListener('click', toggleMenu);
+        mobileLinks.forEach(link => link.addEventListener('click', toggleMenu));
+
+        // Before/After Slider Logic
+        const container = document.getElementById('slider-container');
+        const sliderLine = document.getElementById('slider-line');
+        const imgAfter = document.getElementById('img-after');
+        
+        let isDragging = false;
+
+        function updateSlider(e) {
+            if (!isDragging) return;
+            
+            const rect = container.getBoundingClientRect();
+            let x = e.clientX || (e.touches && e.touches[0].clientX);
+            if (!x) return;
+            
+            let pos = ((x - rect.left) / rect.width) * 100;
+            
+            // Constrain
+            if (pos < 0) pos = 0;
+            if (pos > 100) pos = 100;
+            
+            sliderLine.style.left = `${pos}%`;
+            imgAfter.style.clipPath = `inset(0 ${100 - pos}% 0 0)`;
+        }
+
+        sliderLine.addEventListener('mousedown', () => isDragging = true);
+        sliderLine.addEventListener('touchstart', () => isDragging = true);
+        
+        window.addEventListener('mouseup', () => isDragging = false);
+        window.addEventListener('touchend', () => isDragging = false);
+        
+        window.addEventListener('mousemove', updateSlider);
+        window.addEventListener('touchmove', updateSlider);
+        
+        // Parallax Effect for Hero
+        const header = document.querySelector('header');
+        window.addEventListener('scroll', () => {
+            const scroll = window.scrollY;
+            if (scroll < window.innerHeight) {
+                // Subtle parallax text
+                const heroContent = header.querySelector('.z-10');
+                if (heroContent) {
+                    heroContent.style.transform = `translateY(${scroll * 0.3}px)`;
+                    heroContent.style.opacity = 1 - (scroll / window.innerHeight) * 1.5;
+                }
+            }
+        });
+    </script>
+</body>
+</html>
